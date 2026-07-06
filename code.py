@@ -2,6 +2,8 @@ from pathlib import Path
 import shutil
 from datetime import datetime
 
+#Comment
+
 def organize_by_type(folder_path):
     folder = Path(folder_path)
 
