@@ -2,19 +2,10 @@ from pathlib import Path
 import shutil
 from datetime import datetime
 
-#Comment
+# Comment
 
-SUPPORTED_TYPES = {
-    "pdf",
-    "txt",
-    "png",
-    "jpg",
-    "jpeg",
-    "csv",
-    "py",
-    "html",
-    "docx"
-}
+SUPPORTED_TYPES = {"pdf", "txt", "png", "jpg", "jpeg", "csv", "py", "html", "docx"}
+
 
 def organize_by_type(folder_path):
     folder = Path(folder_path)
@@ -25,7 +16,7 @@ def organize_by_type(folder_path):
     if not folder.is_dir():
         print("Error: Path is not a folder.")
         return
-    
+
     files = [f for f in folder.iterdir() if f.is_file()]
 
     if not files:
@@ -33,32 +24,29 @@ def organize_by_type(folder_path):
         return
 
     for file in files:
-       
 
-            extension = file.suffix[1:]
+        extension = file.suffix[1:]
 
+        if extension == "":
+            extension = "no_extension"
 
-            if extension == "":
-                extension = "no_extension"
+        if extension not in SUPPORTED_TYPES and extension != "no_extension":
+            print(f"Unsupported file type: {extension}")
+            continue
 
-            if extension not in SUPPORTED_TYPES and extension != "no_extension":
-                print(f"Unsupported file type: {extension}")
-                continue
+        new_folder = folder / extension
+        new_folder.mkdir(exist_ok=True)
 
-            new_folder = folder / extension
-            new_folder.mkdir(exist_ok=True)
+        destination = new_folder / file.name
 
-            destination = new_folder / file.name
-
-            if destination.exists():
-                print(f"Skipping {file.name}: file already exists.")
-            else:
-                try:
-                    shutil.move(file, destination)
-                    print(f"Moved {file.name} → {new_folder.name}/")
-                except Exception as e:
-                    print(f"Could not move {file.name}: {e}")
-                
+        if destination.exists():
+            print(f"Skipping {file.name}: file already exists.")
+        else:
+            try:
+                shutil.move(file, destination)
+                print(f"Moved {file.name} → {new_folder.name}/")
+            except Exception as e:
+                print(f"Could not move {file.name}: {e}")
 
 
 def organize_by_date(folder_path):
@@ -70,7 +58,7 @@ def organize_by_date(folder_path):
     if not folder.is_dir():
         print("Error: Path is not a folder.")
         return
-    
+
     files = [f for f in folder.iterdir() if f.is_file()]
 
     if not files:
@@ -78,29 +66,25 @@ def organize_by_date(folder_path):
         return
 
     for file in files:
-    
 
+        timestamp = file.stat().st_mtime
+        date = datetime.fromtimestamp(timestamp)
 
-            timestamp = file.stat().st_mtime
-            date = datetime.fromtimestamp(timestamp)
+        folder_name = date.strftime("%Y-%m")
 
+        new_folder = folder / folder_name
+        new_folder.mkdir(exist_ok=True)
 
-            folder_name = date.strftime("%Y-%m")
+        destination = new_folder / file.name
 
-            new_folder = folder / folder_name
-            new_folder.mkdir(exist_ok=True)
-
-            destination = new_folder / file.name
-
-            if destination.exists():
-                print(f"Skipping {file.name}: file already exists.")
-            else:
-                try:
-                    shutil.move(file, destination)
-                    print(f"Moved {file.name} → {new_folder.name}/")
-                except Exception as e:
-                    print(f"Could not move {file.name}: {e}")
-                
+        if destination.exists():
+            print(f"Skipping {file.name}: file already exists.")
+        else:
+            try:
+                shutil.move(file, destination)
+                print(f"Moved {file.name} → {new_folder.name}/")
+            except Exception as e:
+                print(f"Could not move {file.name}: {e}")
 
 
 def organize_by_keyword(folder_path, keyword):
@@ -123,28 +107,25 @@ def organize_by_keyword(folder_path, keyword):
     keyword_folder = folder / keyword
     keyword_folder.mkdir(exist_ok=True)
 
-    
-
     for file in files:
-       
 
-            if keyword.lower() in file.name.lower():
+        if keyword.lower() in file.name.lower():
 
-                destination = keyword_folder / file.name
+            destination = keyword_folder / file.name
 
-                if destination.exists():
-                    print(f"Skipping {file.name}: file already exists.")
-                else:
-                    try:
-                        shutil.move(file, destination)
-                        moved += 1
-                        print(f"Moved {file.name} → {keyword}/")
-                    except Exception as e:
-                        print(f"Could not move {file.name}: {e}")
-                    
+            if destination.exists():
+                print(f"Skipping {file.name}: file already exists.")
+            else:
+                try:
+                    shutil.move(file, destination)
+                    moved += 1
+                    print(f"Moved {file.name} → {keyword}/")
+                except Exception as e:
+                    print(f"Could not move {file.name}: {e}")
 
     if moved == 0:
         print("No files matched that keyword.")
+
 
 def main():
     print("File Organizer")

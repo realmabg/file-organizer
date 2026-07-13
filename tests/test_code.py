@@ -1,8 +1,10 @@
 from organizer import organize_by_type
 from organizer import organize_by_keyword
 
+
 def test_function_exists():
     assert callable(organize_by_type)
+
 
 def test_pdf_moves_to_pdf_folder(tmp_path):
     pdf = tmp_path / "resume.pdf"
@@ -11,6 +13,7 @@ def test_pdf_moves_to_pdf_folder(tmp_path):
     organize_by_type(tmp_path)
 
     assert (tmp_path / "pdf" / "resume.pdf").exists()
+
 
 def test_file_without_extension(tmp_path):
     file = tmp_path / "README"
@@ -21,7 +24,6 @@ def test_file_without_extension(tmp_path):
     assert (tmp_path / "no_extension" / "README").exists()
 
 
-
 def test_keyword_moves_matching_file(tmp_path):
     file = tmp_path / "school_notes.txt"
     file.write_text("notes")
@@ -29,6 +31,7 @@ def test_keyword_moves_matching_file(tmp_path):
     organize_by_keyword(tmp_path, "school")
 
     assert (tmp_path / "school" / "school_notes.txt").exists()
+
 
 def test_keyword_does_not_move_nonmatching_file(tmp_path):
     file = tmp_path / "vacation.jpg"
@@ -41,6 +44,7 @@ def test_keyword_does_not_move_nonmatching_file(tmp_path):
 
 from organizer import organize_by_type
 
+
 def test_invalid_folder(capsys):
     organize_by_type("this_folder_does_not_exist")
 
@@ -48,7 +52,9 @@ def test_invalid_folder(capsys):
 
     assert "Folder does not exist." in captured.out
 
+
 from organizer import organize_by_type
+
 
 def test_empty_folder(tmp_path, capsys):
     organize_by_type(tmp_path)
@@ -57,7 +63,9 @@ def test_empty_folder(tmp_path, capsys):
 
     assert "Folder contains no files." in captured.out
 
+
 from organizer import organize_by_type
+
 
 def test_unsupported_file_type(tmp_path, capsys):
     file = tmp_path / "virus.exe"
@@ -69,7 +77,9 @@ def test_unsupported_file_type(tmp_path, capsys):
 
     assert "Unsupported file type: exe" in captured.out
 
+
 from organizer import organize_by_keyword
+
 
 def test_keyword_not_found(tmp_path, capsys):
     file = tmp_path / "vacation.jpg"
@@ -81,7 +91,9 @@ def test_keyword_not_found(tmp_path, capsys):
 
     assert "No files matched that keyword." in captured.out
 
+
 from organizer import organize_by_type
+
 
 def test_duplicate_file(tmp_path, capsys):
     source = tmp_path / "resume.pdf"
